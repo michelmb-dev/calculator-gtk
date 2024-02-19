@@ -1,0 +1,21 @@
+button,
+entry {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-reset {
+  background: #ff352c75;
+}
+
+.btn-operand {
+  background: #b4befe60;
+}
+
+.btn-operator {
+  background: #b4befe50;
+}
+
+.btn-result {
+  background: #45ff4575;
+}
