@@ -15,6 +15,8 @@ func main() {
 	app.ConnectActivate(func() {
 		gtkutil.LoadCSS()
 		calc := application.NewCalculator(app)
+		calc.HandleConnectButtons()
+		calc.HandleKeyboard()
 		calc.Show()
 	})
 
