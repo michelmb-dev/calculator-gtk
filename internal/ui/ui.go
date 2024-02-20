@@ -55,7 +55,7 @@ func CreateUiElements() *Tui {
 	ui.ButtonsGrid.SetColumnSpacing(5)
 
 	// Create operator and operand buttons
-	ui.Buttons = *createCalculatorButtons(ui.ButtonsGrid)
+	ui.Buttons = *ui.createCalculatorButtons(ui.ButtonsGrid)
 
 	ui.Box.Append(ui.DisplayEntry)
 	ui.Box.Append(ui.ButtonsGrid)
@@ -63,8 +63,8 @@ func CreateUiElements() *Tui {
 	return &ui
 }
 
-func createCalculatorButtons(buttonsGrid *gtk.Grid) *[][]Tbutton {
-	buttons := [][]Tbutton{
+func (ui *Tui) createCalculatorButtons(buttonsGrid *gtk.Grid) *[][]Tbutton {
+	ui.Buttons = [][]Tbutton{
 		{
 			{Label: "AC", Type: "reset"},
 			{Label: "%", Type: "operator"},
@@ -100,22 +100,23 @@ func createCalculatorButtons(buttonsGrid *gtk.Grid) *[][]Tbutton {
 		},
 	}
 
-	for rowId, row := range buttons {
+	for rowId, row := range ui.Buttons {
 		for colId, btn := range row {
-			button := gtk.NewButtonWithLabel(btn.Label)
-			button.SetFocusable(false)
-			buttonsGrid.Attach(button, colId, rowId, 1, 1)
+			ui.Buttons[rowId][colId].Button = gtk.NewButtonWithLabel(btn.Label)
+			btn := ui.Buttons[rowId][colId]
+			btn.Button.SetFocusable(false)
+			buttonsGrid.Attach(btn.Button, colId, rowId, 1, 1)
 
 			switch btn.Type {
 			case "operator":
-				button.StyleContext().AddClass("btn-operator")
+				btn.Button.StyleContext().AddClass("btn-operator")
 			case "reset":
-				button.StyleContext().AddClass("btn-reset")
+				btn.Button.StyleContext().AddClass("btn-reset")
 			case "result":
-				button.StyleContext().AddClass("btn-result")
+				btn.Button.StyleContext().AddClass("btn-result")
 			}
 		}
 	}
 
-	return &buttons
+	return &ui.Buttons
 }
