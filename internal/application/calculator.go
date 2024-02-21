@@ -5,28 +5,34 @@ import (
 	"github.com/michelmb-dev/calculator-gtk/internal/ui"
 )
 
-type Tcalculator struct {
+type Tapplication struct {
 	*gtk.Application
-	Window *gtk.ApplicationWindow
-	Ui     *ui.Tui
+	Window     *gtk.ApplicationWindow
+	Ui         *ui.Tui
+	Calculator struct {
+		Operand1  float64
+		Operand2  float64
+		Operator  string
+		AwaitNext bool
+	}
 }
 
-func NewCalculator(app *gtk.Application) *Tcalculator {
-	c := Tcalculator{Application: app}
+func NewCalculator(application *gtk.Application) *Tapplication {
+	app := Tapplication{Application: application}
 
 	// create UI elements
-	c.Ui = ui.CreateUiElements()
+	app.Ui = ui.CreateUiElements()
 
 	// Create main window application
-	c.Window = gtk.NewApplicationWindow(app)
-	c.Window.SetTitle("Calculator")
-	c.Window.SetTitlebar(c.Ui.Header)
-	c.Window.SetChild(c.Ui)
-	c.Window.SetResizable(false)
+	app.Window = gtk.NewApplicationWindow(application)
+	app.Window.SetTitle("Calculator")
+	app.Window.SetTitlebar(app.Ui.Header)
+	app.Window.SetChild(app.Ui)
+	app.Window.SetResizable(false)
 
-	return &c
+	return &app
 }
 
-func (c *Tcalculator) Show() {
-	c.Window.Show()
+func (app *Tapplication) Show() {
+	app.Window.Show()
 }
