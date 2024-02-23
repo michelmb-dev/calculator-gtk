@@ -26,6 +26,8 @@ func (app *Tapplication) HandleConnectButtons() {
 					app.handleOperator(localBtn.Label)
 				case "percent":
 					app.handlePercent()
+				case "sqrt":
+					app.handleSqrt()
 				case "result":
 					app.handleResult()
 				}
@@ -73,7 +75,7 @@ func (app *Tapplication) HandleKeyboard() {
 		case gdk.KEY_percent:
 			app.handlePercent()
 		case gdk.KEY_V:
-			app.handleOperator("√")
+			app.handleSqrt()
 		case gdk.KEY_Delete, gdk.KEY_BackSpace:
 			app.handleReset()
 		}
@@ -123,9 +125,18 @@ func (app *Tapplication) handleOperator(value string) {
 	}
 
 	if len(currentText) > 0 {
-		op1, error := strconv.ParseFloat(displayEntry.Text(), 64)
 
-		if error != nil {
+		var op1 float64
+		var err error
+
+		if strings.HasPrefix(currentText, "√") {
+			op1, err = strconv.ParseFloat(strings.Split(currentText, "√")[1], 64)
+			op1 = math.Sqrt(op1)
+		} else {
+			op1, err = strconv.ParseFloat(displayEntry.Text(), 64)
+		}
+
+		if err != nil {
 			displayEntry.SetText("ERROR")
 			return
 		}
@@ -171,17 +182,54 @@ func (app *Tapplication) handlePercent() {
 	}
 }
 
+func (app *Tapplication) handleSqrt() {
+	displayEntry := app.Ui.DisplayEntry
+	currentText := displayEntry.Text()
+
+	if strings.ContainsAny(currentText, "+-*/") {
+		parts := strings.Split(currentText, app.Calculator.Operator)
+		op1, err := strconv.ParseFloat(parts[0], 64)
+		op2, err := strconv.ParseFloat(parts[1], 64)
+		if err != nil {
+			displayEntry.SetText("ERROR")
+		}
+
+		result := app.performCalculation(op1, op2)
+		displayEntry.SetText(fmt.Sprintf("%v", math.Sqrt(result)))
+
+		app.Calculator.Operand1 = result
+		app.Calculator.Operand2 = 0
+		app.Calculator.AwaitNext = false
+	} else {
+		op1, err := strconv.ParseFloat(currentText, 64)
+		if err != nil {
+			displayEntry.SetText("ERROR")
+			return
+		}
+
+		result := math.Sqrt(op1)
+		app.Calculator.Operand1 = result
+		app.Calculator.Operand2 = 0
+		app.Calculator.AwaitNext = false
+		displayEntry.SetText(fmt.Sprintf("%v", result))
+	}
+}
+
 func (app *Tapplication) handleResult() {
 	displayEntry := app.Ui.DisplayEntry
 	currentText := displayEntry.Text()
+
+	var op2 float64
+	var err error
+	var result float64
+
 	if app.Calculator.AwaitNext {
 		op := strings.Split(currentText, app.Calculator.Operator)[1]
-		op2, err := strconv.ParseFloat(op, 64)
+		op2, err = strconv.ParseFloat(op, 64)
 		if err != nil {
 			displayEntry.SetText("ERROR")
 		}
 		app.Calculator.Operand2 = op2
-		var result float64
 
 		result = app.performCalculation(app.Calculator.Operand1, app.Calculator.Operand2)
 		displayEntry.SetText(strconv.FormatFloat(result, 'f', 9, 64))

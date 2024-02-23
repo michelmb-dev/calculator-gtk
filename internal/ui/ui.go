@@ -10,7 +10,7 @@ import (
 type Tbutton struct {
 	*gtk.Button
 	Label string
-	Type  string // "operator" | "operand" | "percent" | "result" | "reset"
+	Type  string // "operator" | "operand" | "percent" | "sqrt" | "result" | "reset"
 }
 
 type Tui struct {
@@ -68,7 +68,7 @@ func (ui *Tui) createCalculatorButtons(buttonsGrid *gtk.Grid) *[][]Tbutton {
 		{
 			{Label: "AC", Type: "reset"},
 			{Label: "%", Type: "percent"},
-			{Label: "√", Type: "operator"},
+			{Label: "√", Type: "sqrt"},
 			{Label: "/", Type: "operator"},
 		},
 		{
@@ -108,7 +108,7 @@ func (ui *Tui) createCalculatorButtons(buttonsGrid *gtk.Grid) *[][]Tbutton {
 			buttonsGrid.Attach(btn.Button, colId, rowId, 1, 1)
 
 			switch btn.Type {
-			case "operator", "percent":
+			case "operator", "percent", "sqrt":
 				btn.Button.StyleContext().AddClass("btn-operator")
 			case "reset":
 				btn.Button.StyleContext().AddClass("btn-reset")
