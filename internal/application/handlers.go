@@ -62,6 +62,8 @@ func (app *Tapplication) HandleKeyboard() {
 			app.handleOperand("9")
 		case gdk.KEY_KP_Decimal, gdk.KEY_period:
 			app.handleOperand(".")
+		case gdk.KEY_P:
+			app.handleOperand("π")
 		case gdk.KEY_KP_Enter, gdk.KEY_Return:
 			app.handleResult()
 		case gdk.KEY_KP_Add, gdk.KEY_plus:
